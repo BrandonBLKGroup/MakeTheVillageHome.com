@@ -547,6 +547,7 @@ async function handleBuyerSubmit(e){
     notes:document.getElementById('buyNotes').value.trim()||null,is_active:true
   };
   try{await sb.from('buyers').insert([d]);}catch(err){console.log('DB:',err);}
+  try{await sb.from('lab_leads').insert([{lead_source:'brain_buyers',name:d.first_name+' '+d.last_name,phone:d.phone,email:d.email,address:selectedSubs.join(', '),notes:'BUYER | '+d.source_domain+' | Price: '+(d.price_min||'?')+'-'+(d.price_max||'?')+' | Timeline: '+(d.timeline||'?')+(d.notes?' | '+d.notes:''),date_added:new Date().toISOString().slice(0,10),claimed:false}]);}catch(err){console.log('Lab:',err);}
   try{
     const fd=new FormData();
     fd.append('domain','makethevillagehome.com');fd.append('type','buyer');
@@ -599,6 +600,7 @@ async function handleSellerSubmit(e){
   d.notes=noteParts.join(' | ')||null;
 
   try{await sb.from('sellers').insert([d]);}catch(err){console.log('DB:',err);}
+  try{await sb.from('lab_leads').insert([{lead_source:'brain_sellers',name:d.first_name+' '+d.last_name,phone:d.phone,email:d.email,address:d.address,notes:'SELLER | '+d.source_domain+' | '+(d.notes||''),date_added:new Date().toISOString().slice(0,10),claimed:false}]);}catch(err){console.log('Lab:',err);}
   try{
     const fd=new FormData();
     fd.append('domain','makethevillagehome.com');fd.append('type','seller');
