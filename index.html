@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homes for Sale in Hot Springs Village | Off-Market Properties | The BLK Group</title>
+<meta name="description" content="Find off-market homes for sale in Hot Springs Village, Arkansas. Access exclusive properties before they hit the MLS. The BLK Group at LPT Realty - #1 Team in Central Arkansas. 700+ homes sold.">
+<meta name="keywords" content="homes for sale hot springs village, hot springs village real estate, off market homes hot springs village, houses for sale hot springs village, hot springs village properties, off market properties hot springs village, BLK Group, LPT Realty, Brandon Bruning, real estate hot springs village arkansas, HSV homes for sale, HSV real estate">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://makethevillagehome.com/">
+<meta property="og:title" content="Off-Market Homes in Hot Springs Village | The BLK Group">
+<meta property="og:description" content="Exclusive access to off-market homes for sale in Hot Springs Village, Arkansas. Over 4,300 properties in our database. The #1 team in Central Arkansas.">
+<meta property="og:url" content="https://makethevillagehome.com/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Off-Market Homes in Hot Springs Village | The BLK Group">
+<meta name="twitter:description" content="Exclusive access to off-market homes for sale in Hot Springs Village, Arkansas. Over 4,300 properties in our database.">
+<meta name="geo.region" content="US-AR">
+<meta name="geo.placename" content="Hot Springs Village">
+<meta name="geo.position" content="34.66;-93.01">
+<meta name="ICBM" content="34.66, -93.01">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;color:#222;overflow-x:hidden}
+.header{background:#fff;border-bottom:1px solid #e0e0e0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.brand h1{font-size:22px;color:#111;letter-spacing:2px;font-weight:800}
+.brand .tag{font-size:11px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.header-logo{flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.lpt-logo{height:36px;opacity:0.6}
+.header-stats{text-align:right}
+.header-stats .big-num{font-size:32px;font-weight:800;color:#111}
+.header-stats .big-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px}
+.landing-hero{background:#fafafa;padding:60px 24px 40px;text-align:center;position:relative}
+.landing-hero h2{font-size:40px;color:#111;margin-bottom:12px;line-height:1.15}
+.landing-hero h2 em{color:#111;font-style:normal;position:relative;display:inline-block;padding-bottom:10px}
+.landing-hero h2 em::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:6px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'%3E%3Cpath d='M4 6 Q100 0 196 6' stroke='%235B8A5A' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center;background-size:100% 100%}
+.landing-hero p{color:#666;font-size:16px;max-width:620px;margin:0 auto 40px;line-height:1.6}
+.choice-buttons{display:flex;justify-content:center;gap:24px;max-width:640px;margin:0 auto}
+.choice-btn{flex:1;padding:32px 24px;border-radius:16px;cursor:pointer;transition:all 0.3s;text-align:center;border:2px solid transparent;text-decoration:none}
+.choice-btn:hover{transform:translateY(-4px)}
+.choice-btn.buy{background:#fff;border-color:#222}
+.choice-btn.buy:hover{box-shadow:0 8px 32px rgba(0,0,0,0.08);border-color:#000}
+.choice-btn.sell{background:#fff;border-color:#222}
+.choice-btn.sell:hover{box-shadow:0 8px 32px rgba(0,0,0,0.08);border-color:#000}
+.choice-btn .icon{font-size:48px;margin-bottom:12px}
+.choice-btn h3{font-size:22px;color:#111;margin-bottom:8px;font-weight:800}
+.choice-btn p{font-size:13px;color:#888;line-height:1.5;margin:0}
+.map-section{position:relative;height:450px}
+#map,.map-el{width:100%;height:100%;background:#0d0d15}
+.map-overlay{position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.88);padding:16px 20px;border-radius:10px;z-index:1000;border:1px solid #333;max-width:260px;backdrop-filter:blur(8px)}
+.map-overlay h3{color:#5B8A5A;font-size:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.map-overlay p{font-size:12px;color:#aaa;line-height:1.5}
+.map-legend{position:absolute;bottom:16px;left:16px;background:rgba(0,0,0,0.88);padding:12px 16px;border-radius:8px;z-index:1000;font-size:11px;border:1px solid #333}
+.map-legend .leg-title{font-weight:700;margin-bottom:6px;color:#fff}
+.map-legend .leg-item{display:flex;align-items:center;gap:8px;margin:4px 0;color:#fff}
+.map-legend .leg-dot{width:12px;height:12px;border-radius:50%}
+.page-view{display:none}
+.page-view.active{display:block}
+.back-bar{padding:12px 24px;background:#f5f5f5;border-bottom:1px solid #e0e0e0}
+.back-btn{background:none;border:1px solid #ccc;color:#666;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.2s}
+.back-btn:hover{color:#111;border-color:#999}
+.form-section{background:#fafafa;padding:60px 24px}
+.form-section.buy-form{border-top:2px solid #222}
+.form-section.sell-form{border-top:2px solid #222}
+.form-container{max-width:640px;margin:0 auto}
+.form-section h2{font-size:28px;color:#111;text-align:center;margin-bottom:8px}
+.form-section h2 em{color:#111;font-style:normal}
+.form-section .form-sub{color:#666;font-size:14px;text-align:center;max-width:520px;margin:0 auto 32px;line-height:1.6}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{display:flex;flex-direction:column;gap:4px}
+.form-field.full{grid-column:1/-1}
+.form-field label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+.form-field input,.form-field select,.form-field textarea{background:#fff;border:1px solid #ddd;color:#222;padding:12px 14px;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:#222}
+.form-field input::placeholder,.form-field textarea::placeholder{color:#bbb}
+.form-field select{cursor:pointer}
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:240px;overflow-y:auto;padding:8px;background:#fff;border:1px solid #ddd;border-radius:8px}
+.sub-check{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:background 0.15s;font-size:13px;color:#444}
+.sub-check:hover{background:rgba(0,0,0,0.04)}
+.sub-check input{accent-color:#222;width:16px;height:16px;cursor:pointer}
+.sub-check .sub-count{font-size:10px;color:#999;margin-left:auto}
+.submit-btn{width:100%;padding:16px;background:#111;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s;margin-top:20px}
+.submit-btn:hover{background:#333;transform:translateY(-1px)}
+.submit-btn.sell-btn{background:#111;color:#fff}
+.submit-btn.sell-btn:hover{background:#333}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.form-trust{text-align:center;margin-top:16px;font-size:12px;color:#999}
+.form-trust strong{color:#111}
+.success-msg{display:none;text-align:center;padding:40px 20px}
+.success-msg h3{color:#111;font-size:24px;margin-bottom:12px}
+.success-msg p{color:#666;font-size:14px;line-height:1.6}
+.sell-hero{background:#f5f5f5;padding:48px 24px;text-align:center;border-bottom:1px solid #e0e0e0}
+.sell-hero h2{font-size:36px;color:#111;margin-bottom:12px;line-height:1.2}
+.sell-hero h2 em{color:#111;font-style:normal}
+.sell-hero p{color:#666;font-size:16px;max-width:620px;margin:0 auto;line-height:1.6}
+.buy-hero{background:#f5f5f5;padding:48px 24px;text-align:center;border-bottom:1px solid #e0e0e0}
+.buy-hero h2{font-size:36px;color:#111;margin-bottom:12px;line-height:1.2}
+.buy-hero h2 em{color:#111;font-style:normal}
+.buy-hero p{color:#666;font-size:16px;max-width:600px;margin:0 auto;line-height:1.6}
+.sell-benefits{background:#fff;padding:40px 24px;border-bottom:1px solid #e0e0e0}
+.sell-benefits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:800px;margin:0 auto}
+.sell-benefit{text-align:center;padding:28px 20px;background:#fff;border:1px solid #e0e0e0;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:all 0.25s}
+.sell-benefit:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
+.sell-benefit .sb-icon{font-size:32px;margin-bottom:12px}
+.sell-benefit h4{color:#111;font-size:15px;margin-bottom:6px}
+.sell-benefit p{color:#888;font-size:12px;line-height:1.5}
+.proof{background:#fff;padding:40px 24px;text-align:center;border-top:1px solid #e0e0e0}
+.proof-stats{display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
+.proof-stat .num{font-size:36px;font-weight:800;color:#111}
+.proof-stat .lbl{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px}
+.footer{background:#fafafa;padding:20px 24px;text-align:center;font-size:11px;color:#999;border-top:1px solid #e0e0e0}
+.pulse-marker{width:16px;height:16px;background:#5B8A5A;border-radius:50%;position:relative;box-shadow:0 0 8px rgba(91,138,90,0.5)}
+.pulse-marker::after{content:'';position:absolute;width:100%;height:100%;border-radius:50%;background:#5B8A5A;animation:pulse 2s infinite;top:0;left:0}
+@keyframes pulse{0%{transform:scale(1);opacity:0.5}100%{transform:scale(3);opacity:0}}
+.dark-tooltip{background:rgba(0,0,0,0.9)!important;color:#fff!important;border:1px solid #333!important;border-radius:6px!important;padding:8px 12px!important;font-size:12px!important;box-shadow:0 4px 12px rgba(0,0,0,0.5)!important}
+.dark-tooltip .leaflet-tooltip-tip{display:none}
+@media(max-width:640px){
+.header{flex-direction:column;gap:10px;text-align:center}
+.header-stats{text-align:center}
+.landing-hero h2{font-size:24px}
+.landing-hero{padding:40px 16px 32px}
+.landing-hero p{font-size:14px}
+.buy-hero h2,.sell-hero h2{font-size:24px}
+.choice-buttons{flex-direction:column;gap:16px}
+.map-section{height:380px}
+.map-overlay{position:absolute;top:12px;right:12px;left:auto;bottom:auto;max-width:65%;padding:10px 14px;font-size:11px;border-radius:8px}
+.map-overlay h3{font-size:11px;margin-bottom:4px}
+.map-overlay p{font-size:10px;line-height:1.4}
+.map-legend{bottom:12px;left:12px;font-size:10px}
+.form-grid{grid-template-columns:1fr}
+.sub-grid{grid-template-columns:1fr}
+.proof-stats{gap:24px}
+.sell-benefits-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- SHARED HEADER -->
+<div class="header">
+  <div class="brand">
+    <h1>THE BLK GROUP</h1>
+    <div class="tag">at LPT Realty | #1 Team in Central Arkansas</div>
+  </div>
+  <div class="header-logo">
+    <img src="https://www.lptrealty.com/assets/images/logo.svg" alt="LPT Realty" class="lpt-logo">
+  </div>
+  <div class="header-stats">
+    <div class="big-num" id="offMarketCount">4,304</div>
+    <div class="big-label">Properties in Our Off-Market Database</div>
+  </div>
+</div>
+
+<!-- ==================== LANDING VIEW ==================== -->
+<div class="page-view active" id="landingView">
+  <div class="landing-hero">
+    <h2>The <em>Best Homes</em> in Hot Springs Village</h2>
+    <p>We connect buyers and sellers before properties ever hit the public market. Over 4,300 Hot Springs Village homeowners are in our off-market database. What brings you here?</p>
+    <div class="choice-buttons">
+      <a class="choice-btn buy" onclick="showView('buy')">
+        <div class="icon">🏠</div>
+        <h3>I Want to Buy</h3>
+        <p>Get matched with off-market homes in your preferred neighborhoods before anyone else sees them.</p>
+      </a>
+      <a class="choice-btn sell" onclick="showView('sell')">
+        <div class="icon">💰</div>
+        <h3>I Want to Sell</h3>
+        <p>We already have buyers looking in your neighborhood. Sell on your terms, skip the hassle of a public listing.</p>
+      </a>
+    </div>
+  </div>
+
+  <div class="map-section">
+    <div id="map"></div>
+    <div class="map-overlay">
+      <h3>What You're Seeing</h3>
+      <p>Green zones indicate neighborhoods where homeowners have expressed willingness to sell off-market, through The BLK Group at LPT Realty. Register below to get matched with available properties and connect with a BLK Group agent now!</p>
+    </div>
+    <div class="map-legend">
+      <div class="leg-title">MAP KEY</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#5B8A5A;box-shadow:0 0 6px rgba(91,138,90,0.4)"></div>Homes Available Off Market!</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#333;border:1px solid #555"></div>Neighborhood</div>
+    </div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-stats">
+      <div class="proof-stat"><div class="num">700+</div><div class="lbl">Homes Sold</div></div>
+      <div class="proof-stat"><div class="num">#1</div><div class="lbl">Team in Central Arkansas</div></div>
+      <div class="proof-stat"><div class="num" id="subCount">145</div><div class="lbl">Village Neighborhoods Covered</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BUYER VIEW ==================== -->
+<div class="page-view" id="buyView">
+  <div class="back-bar"><button class="back-btn" onclick="showView('landing')">&#8592; Back</button></div>
+
+  <div class="buy-hero">
+    <h2>Exclusive Access to <em>Off-Market Homes</em> in Hot Springs Village</h2>
+    <p>We work directly with homeowners across Hot Springs Village who are open to selling before they ever list on the MLS. Get first access to properties no one else knows about.</p>
+  </div>
+
+  <div class="map-section">
+    <div id="buyMap" class="map-el"></div>
+    <div class="map-overlay">
+      <h3>What You're Seeing</h3>
+      <p>Green zones indicate neighborhoods where homeowners have expressed willingness to sell off-market, through The BLK Group at LPT Realty. Register below to get matched with available properties and connect with a BLK Group agent now!</p>
+    </div>
+    <div class="map-legend">
+      <div class="leg-title">MAP KEY</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#5B8A5A;box-shadow:0 0 6px rgba(91,138,90,0.4)"></div>Homes Available Off Market!</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#333;border:1px solid #555"></div>Neighborhood</div>
+    </div>
+  </div>
+
+  <div class="form-section buy-form">
+    <div class="form-container">
+      <h2>Get Matched with <em>Off-Market Homes</em></h2>
+      <p class="form-sub">Tell us what you're looking for. When a property matches in your preferred neighborhoods, you'll be the first to know.</p>
+      
+      <form id="buyerForm" onsubmit="handleBuyerSubmit(event)">
+        <div class="form-grid">
+          <div class="form-field"><label>First Name *</label><input type="text" id="buyFirstName" placeholder="First name" required></div>
+          <div class="form-field"><label>Last Name *</label><input type="text" id="buyLastName" placeholder="Last name" required></div>
+          <div class="form-field"><label>Email *</label><input type="email" id="buyEmail" placeholder="you@email.com" required></div>
+          <div class="form-field"><label>Phone *</label><input type="tel" id="buyPhone" placeholder="(555) 555-5555" required></div>
+          <div class="form-field"><label>Price Range (Min)</label><input type="number" id="buyPriceMin" placeholder="150000" step="10000"></div>
+          <div class="form-field"><label>Price Range (Max)</label><input type="number" id="buyPriceMax" placeholder="500000" step="10000"></div>
+          <div class="form-field full"><label>Timeline</label>
+            <select id="buyTimeline">
+              <option value="">How soon are you looking to buy?</option>
+              <option value="asap">As soon as possible</option>
+              <option value="1-3months">1-3 months</option>
+              <option value="3-6months">3-6 months</option>
+              <option value="6-12months">6-12 months</option>
+              <option value="just_looking">Just exploring options</option>
+            </select>
+          </div>
+          <div class="form-field full"><label>Which Neighborhoods Interest You? *</label><div class="sub-grid" id="buySubGrid"><div style="color:#666;padding:12px">Loading...</div></div></div>
+          <div class="form-field full"><label>Anything Else We Should Know?</label><textarea id="buyNotes" rows="3" placeholder="Bedrooms, lake views, golf course access, must-haves, deal-breakers..."></textarea></div>
+        </div>
+        <button type="submit" class="submit-btn" id="buySubmitBtn">Get Early Access to Off-Market Homes</button>
+      </form>
+      <div class="success-msg" id="buySuccessMsg">
+        <h3>You're on the list!</h3>
+        <p>We'll match you with off-market properties in your preferred neighborhoods. Our team leader, Brandon Bruning, will be in touch soon to learn more about what you're looking for.</p>
+      </div>
+      <div class="form-trust"><strong>700+ homes sold</strong> in Central Arkansas. Your information is never shared with third parties.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SELLER VIEW ==================== -->
+<div class="page-view" id="sellView">
+  <div class="back-bar"><button class="back-btn" onclick="showView('landing')">&#8592; Back</button></div>
+
+  <div class="sell-hero">
+    <h2>We Already Have <em>Buyers Looking</em> in Your Neighborhood</h2>
+    <p>Skip the open houses, the strangers walking through your home, and the months of waiting. We have pre-qualified buyers actively searching for homes in Hot Springs Village right now. Sell on your terms.</p>
+  </div>
+
+  <div class="sell-benefits">
+    <div class="sell-benefits-grid">
+      <div class="sell-benefit">
+        <div class="sb-icon">🔒</div>
+        <h4>Stay Private</h4>
+        <p>Your house never hits the public market. No yard signs, no open houses, no nosy neighbors. Sell quietly.</p>
+      </div>
+      <div class="sell-benefit">
+        <div class="sb-icon">⚡</div>
+        <h4>Sell Faster</h4>
+        <p>We match you directly with buyers who are already looking in your area. No waiting for someone to find your listing.</p>
+      </div>
+      <div class="sell-benefit">
+        <div class="sb-icon">💰</div>
+        <h4>Your Terms</h4>
+        <p>Set your price, your timeline, your conditions. No pressure. If the right offer comes, you decide.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="map-section">
+    <div id="sellMap" class="map-el"></div>
+    <div class="map-overlay">
+      <h3 style="color:#5B8A5A">Buyer Demand</h3>
+      <p>Green zones show where registered buyers are actively looking. The more activity, the faster your property could sell off-market.</p>
+    </div>
+    <div class="map-legend">
+      <div class="leg-title">MAP KEY</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#5B8A5A;box-shadow:0 0 6px rgba(91,138,90,0.4)"></div>Active Buyer Interest</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#333;border:1px solid #555"></div>Neighborhood</div>
+    </div>
+  </div>
+
+  <div class="form-section sell-form">
+    <div class="form-container">
+      <h2>Register Your Property for <em>Off-Market Sale</em></h2>
+      <p class="form-sub">Tell us about your property. We'll match it with buyers in our database who are looking in your neighborhood. No obligation, no public listing.</p>
+      
+      <form id="sellerForm" onsubmit="handleSellerSubmit(event)">
+        <div class="form-grid">
+          <div class="form-field"><label>First Name *</label><input type="text" id="sellFirstName" placeholder="First name" required></div>
+          <div class="form-field"><label>Last Name *</label><input type="text" id="sellLastName" placeholder="Last name" required></div>
+          <div class="form-field"><label>Email *</label><input type="email" id="sellEmail" placeholder="you@email.com" required></div>
+          <div class="form-field"><label>Phone *</label><input type="tel" id="sellPhone" placeholder="(555) 555-5555" required></div>
+          <div class="form-field full"><label>Property Address *</label><input type="text" id="sellAddress" placeholder="123 Balboa Dr, Hot Springs Village, AR 71909" required></div>
+          <div class="form-field full"><label>Which Neighborhood Is Your Property In?</label><div class="sub-grid" id="sellSubGrid"><div style="color:#666;padding:12px">Loading...</div></div></div>
+          <div class="form-field"><label>Asking Price (or estimate)</label><input type="number" id="sellPrice" placeholder="350000" step="5000"></div>
+          <div class="form-field"><label>Timeline</label>
+            <select id="sellTimeline">
+              <option value="">When are you looking to sell?</option>
+              <option value="asap">As soon as possible</option>
+              <option value="1-3months">1-3 months</option>
+              <option value="3-6months">3-6 months</option>
+              <option value="6-12months">6-12 months</option>
+              <option value="just_exploring">Just exploring what my house could be worth</option>
+            </select>
+          </div>
+          <div class="form-field"><label>Bedrooms</label><input type="number" id="sellBeds" placeholder="3" min="1" max="10"></div>
+          <div class="form-field"><label>Bathrooms</label><input type="number" id="sellBaths" placeholder="2" min="1" max="10" step="0.5"></div>
+          <div class="form-field full"><label>Tell Us About Your Property</label><textarea id="sellNotes" rows="3" placeholder="Square footage, lake views, golf course lot, recent updates, anything special about your house..."></textarea></div>
+          <div class="form-field full" style="margin-top:8px">
+            <label class="sub-check" style="padding:10px 12px;background:#f5f5f5;border:1px solid #ddd;border-radius:8px;font-size:14px;color:#444">
+              <input type="checkbox" id="sellOptIn30Day" style="accent-color:#5B8A5A;width:18px;height:18px;cursor:pointer">
+              <span>Yes, I would like to receive a copy of The BLK Group's <strong style="color:#5B8A5A">30 Day Marketing Strategy</strong></span>
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn sell-btn" id="sellSubmitBtn">Register My Property Off-Market</button>
+      </form>
+      <div class="success-msg" id="sellSuccessMsg">
+        <h3 style="color:#5B8A5A">You're Registered!</h3>
+        <p>We're already checking our buyer database for matches in your neighborhood. Our team leader, Brandon Bruning, will reach out soon to discuss your property and the buyers we have lined up. No obligation, no pressure.</p>
+      </div>
+      <div class="form-trust"><strong>700+ homes sold</strong> in Central Arkansas. Your information is never shared publicly.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SHARED FOOTER -->
+<div class="footer">
+  <h2 style="font-size:14px;color:#666;font-weight:400;margin-bottom:8px">Off-Market Homes for Sale in Hot Springs Village, Arkansas</h2>
+  <p style="max-width:600px;margin:0 auto 12px;color:#999;font-size:11px;line-height:1.5">The BLK Group at LPT Realty specializes in off-market real estate in Hot Springs Village. Whether you are looking to buy a home in the Village or sell your property privately, we connect buyers and sellers before properties ever hit the public market. Serving all Hot Springs Village neighborhoods including Isabella, Diamante, Coronado, Balboa, Ponce de Leon, and more.</p>
+  The BLK Group at LPT Realty | Brandon Bruning | (479) 857-5994 | Hot Springs Village, Arkansas<br>
+  &copy; 2026 The BLK Group. All rights reserved.
+</div>
+
+<!-- STRUCTURED DATA FOR GOOGLE -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  "name": "The BLK Group at LPT Realty",
+  "description": "Off-market homes for sale in Hot Springs Village, Arkansas. Exclusive access to properties before they hit the MLS. #1 real estate team in Central Arkansas with 700+ homes sold.",
+  "url": "https://makethevillagehome.com",
+  "telephone": "+1-479-857-5994",
+  "email": "BrandonBLKGroup@Gmail.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Hot Springs Village",
+    "addressRegion": "AR",
+    "addressCountry": "US"
+  },
+  "areaServed": {
+    "@type": "Place",
+    "name": "Hot Springs Village, Arkansas"
+  },
+  "founder": {
+    "@type": "Person",
+    "name": "Brandon Bruning"
+  },
+  "knowsAbout": ["off-market homes", "Hot Springs Village real estate", "homes for sale in Hot Springs Village", "HSV real estate", "retirement communities Arkansas"],
+  "slogan": "#1 Team in Central Arkansas"
+}
+</script>
+
+<script src="data_parcels.js"></script>
+<script src="data_boundaries.js"></script>
+<script src="data_stats.js"></script>
+
+<script>
+const SUPABASE_URL='https://fzlwkbhpsklsgkinwljt.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bHdrYmhwc2tsc2draW53bGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNTE0MzEsImV4cCI6MjA4NzYyNzQzMX0.lc6A8RCUySU0Hn9MjPcR9rH1c8DjSj_A7MV8JuLvwik';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const SHEET_URL='https://script.google.com/macros/s/AKfycbwdXX0AT7DsGMvOTcj_0s8hCuZ0g5m-4kjwSctMwbTAxJ1ms7X9Uad_QKQicv7RbKrh4Q/exec';
+
+// Filter out non-residential subdivisions (churches, golf courses, commercial, lakes, cemeteries, fire stations)
+const SKIP_PATTERNS=['CHURCH','GOLF COURSE','COMMERCIAL','CEMETERY','FIRE STATION','LAKE ','DAM SITE','FINE ARTS','GOOD SAMARITAN','ASSEMBLY OF GOD','CEDAR LODGE'];
+
+let subData={};
+let mapsBuilt={};
+
+function init(){
+  // Build subdivision data from parcels
+  const subCounts={};
+  const subCoords={};
+  
+  HSV_PARCELS.forEach(p=>{
+    const s=p.subdivision;
+    if(!s)return;
+    if(!subCounts[s])subCounts[s]=0;
+    if(!subCoords[s])subCoords[s]=[];
+    subCounts[s]++;
+    subCoords[s].push([p.lat,p.lng]);
+  });
+  
+  // Merge with boundary data and filter out non-residential
+  Object.keys(subCounts).forEach(name=>{
+    const upper=name.toUpperCase();
+    if(SKIP_PATTERNS.some(pat=>upper.includes(pat)))return;
+    if(subCounts[name]<3)return; // skip tiny subdivisions
+    
+    const boundData=HSV_SUBDIVISIONS[name]||{};
+    subData[name]={
+      name:name,
+      count:subCounts[name],
+      center:boundData.center||[
+        subCoords[name].reduce((a,c)=>a+c[0],0)/subCoords[name].length,
+        subCoords[name].reduce((a,c)=>a+c[1],0)/subCoords[name].length
+      ],
+      bounds:boundData.bounds||null
+    };
+  });
+  
+  const totalHomes=HSV_PARCELS.length;
+  const totalSubs=Object.keys(subData).length;
+  
+  document.getElementById('offMarketCount').textContent=totalHomes.toLocaleString();
+  document.getElementById('subCount').textContent=totalSubs;
+  
+  buildMap('map');
+  buildSubChecklist('buySubGrid');
+  buildSubChecklist('sellSubGrid');
+  checkHash();
+}
+
+function titleCase(s){
+  return s.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+}
+
+function showView(view){
+  document.querySelectorAll('.page-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(view+'View').classList.add('active');
+  window.scrollTo(0,0);
+  if(view==='buy'&&!mapsBuilt.buy){
+    setTimeout(()=>{buildMap('buyMap');mapsBuilt.buy=true;},50);
+  }
+  if(view==='sell'&&!mapsBuilt.sell){
+    setTimeout(()=>{buildMap('sellMap');mapsBuilt.sell=true;},50);
+  }
+  if(view==='landing')history.pushState(null,'',window.location.pathname);
+  else history.pushState(null,'','#'+view);
+}
+
+function checkHash(){
+  const h=window.location.hash.replace('#','');
+  if(h==='buy'||h==='sell')showView(h);
+}
+
+function buildMap(elemId){
+  const el=document.getElementById(elemId);
+  // HSV center coordinates
+  const m=L.map(elemId,{center:[34.66,-93.01],zoom:12,zoomControl:true,scrollWheelZoom:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(m);
+  
+  const bounds=[];
+  
+  // Draw all parcel dots
+  HSV_PARCELS.forEach(p=>{
+    if(!p.lat||!p.lng)return;
+    L.circleMarker([p.lat,p.lng],{
+      radius:3.5,fillColor:'#444455',fillOpacity:0.45,color:'#555566',weight:0.5,opacity:0.3,interactive:false
+    }).addTo(m);
+    bounds.push([p.lat,p.lng]);
+  });
+  
+  // Draw subdivision pulse markers
+  const sortedSubs=Object.values(subData).sort((a,b)=>b.count-a.count);
+  
+  sortedSubs.forEach(sub=>{
+    if(!sub.center)return;
+    const sz=Math.min(22,Math.max(8,sub.count/8));
+    const icon=L.divIcon({className:'',html:'<div class="pulse-marker" style="width:'+sz+'px;height:'+sz+'px"></div>',iconSize:[sz,sz]});
+    L.marker(sub.center,{icon}).bindTooltip(
+      titleCase(sub.name)+'<br><span style="color:#5B8A5A">'+sub.count+' properties</span>',
+      {className:'dark-tooltip'}
+    ).addTo(m);
+  });
+  
+  // Scatter large pulsers in top neighborhoods for visual effect
+  const topSubs=sortedSubs.filter(s=>s.count>15).slice(0,12);
+  topSubs.forEach(sub=>{
+    const n=Math.floor(Math.random()*2)+1;
+    for(let i=0;i<n;i++){
+      const oLat=sub.center[0]+(Math.random()-0.5)*0.006;
+      const oLng=sub.center[1]+(Math.random()-0.5)*0.006;
+      const sz=Math.floor(Math.random()*14)+16;
+      const icon=L.divIcon({className:'',html:'<div class="pulse-marker" style="width:'+sz+'px;height:'+sz+'px;opacity:0.7"></div>',iconSize:[sz,sz]});
+      L.marker([oLat,oLng],{icon,interactive:false}).addTo(m);
+    }
+  });
+  
+  if(bounds.length)m.fitBounds(bounds,{padding:[40,40]});
+  
+  // Fix secondary map rendering
+  if(elemId!=='map'){
+    setTimeout(()=>{m.invalidateSize();if(bounds.length)m.fitBounds(bounds,{padding:[40,40]});},100);
+    setTimeout(()=>{m.invalidateSize();if(bounds.length)m.fitBounds(bounds,{padding:[40,40]});},400);
+    setTimeout(()=>{m.invalidateSize();},800);
+  }
+}
+
+function buildSubChecklist(gridId){
+  const sorted=Object.values(subData).sort((a,b)=>b.count-a.count);
+  const prefix=gridId.replace('SubGrid','');
+  const grid=document.getElementById(gridId);
+  grid.innerHTML=sorted.map(sub=>{
+    const name=titleCase(sub.name);
+    return '<label class="sub-check"><input type="checkbox" name="'+prefix+'Subs" value="'+name+'"><span>'+name+'</span><span class="sub-count">'+sub.count+'</span></label>';
+  }).join('');
+}
+
+// BUYER FORM SUBMIT
+async function handleBuyerSubmit(e){
+  e.preventDefault();
+  const btn=document.getElementById('buySubmitBtn');
+  const checked=document.querySelectorAll('input[name="buySubs"]:checked');
+  const selectedSubs=Array.from(checked).map(c=>c.value);
+  if(!selectedSubs.length){alert('Please select at least one neighborhood.');return;}
+  btn.disabled=true;btn.textContent='Submitting...';
+
+  const d={
+    first_name:document.getElementById('buyFirstName').value.trim(),
+    last_name:document.getElementById('buyLastName').value.trim(),
+    email:document.getElementById('buyEmail').value.trim(),
+    phone:document.getElementById('buyPhone').value.trim(),
+    neighborhoods_of_interest:selectedSubs,
+    price_min:document.getElementById('buyPriceMin').value?parseInt(document.getElementById('buyPriceMin').value):null,
+    price_max:document.getElementById('buyPriceMax').value?parseInt(document.getElementById('buyPriceMax').value):null,
+    timeline:document.getElementById('buyTimeline').value||null,
+    source:'buyer_form',source_domain:'MakeTheVillageHome.com',
+    notes:document.getElementById('buyNotes').value.trim()||null,is_active:true
+  };
+  try{await sb.from('buyers').insert([d]);}catch(err){console.log('DB:',err);}
+  try{
+    const fd=new FormData();
+    fd.append('domain','makethevillagehome.com');fd.append('type','buyer');
+    fd.append('date',new Date().toISOString());
+    fd.append('first_name',d.first_name);fd.append('last_name',d.last_name);
+    fd.append('email',d.email);fd.append('phone',d.phone);
+    fd.append('neighborhoods',selectedSubs.join(', '));
+    fd.append('price_min',d.price_min||'');fd.append('price_max',d.price_max||'');
+    fd.append('timeline',d.timeline||'');fd.append('notes',d.notes||'');
+    fetch(SHEET_URL,{method:'POST',body:fd,mode:'no-cors'});
+  }catch(err){}
+  document.getElementById('buyerForm').style.display='none';
+  document.getElementById('buySuccessMsg').style.display='block';
+}
+
+// SELLER FORM SUBMIT
+async function handleSellerSubmit(e){
+  e.preventDefault();
+  const btn=document.getElementById('sellSubmitBtn');
+  btn.disabled=true;btn.textContent='Submitting...';
+
+  const checked=document.querySelectorAll('input[name="sellSubs"]:checked');
+  const selectedSubs=Array.from(checked).map(c=>c.value);
+
+  const d={
+    first_name:document.getElementById('sellFirstName').value.trim(),
+    last_name:document.getElementById('sellLastName').value.trim(),
+    email:document.getElementById('sellEmail').value.trim(),
+    phone:document.getElementById('sellPhone').value.trim(),
+    address:document.getElementById('sellAddress').value.trim(),
+    timeline:document.getElementById('sellTimeline').value||null,
+    source:'seller_form',source_domain:'MakeTheVillageHome.com',
+    status:'new'
+  };
+
+  const neighborhood=selectedSubs.length?selectedSubs[0]:null;
+  const askingPrice=document.getElementById('sellPrice').value?parseInt(document.getElementById('sellPrice').value):null;
+  const beds=document.getElementById('sellBeds').value||null;
+  const baths=document.getElementById('sellBaths').value||null;
+  const userNotes=document.getElementById('sellNotes').value.trim()||null;
+  const wants30Day=document.getElementById('sellOptIn30Day').checked;
+
+  const noteParts=[];
+  if(neighborhood)noteParts.push('NEIGHBORHOOD: '+neighborhood);
+  if(askingPrice)noteParts.push('ASKING: $'+askingPrice.toLocaleString());
+  if(beds)noteParts.push(beds+'bd');
+  if(baths)noteParts.push(baths+'ba');
+  if(wants30Day)noteParts.push('*** WANTS 30-DAY MARKETING STRATEGY ***');
+  if(userNotes)noteParts.push(userNotes);
+  d.notes=noteParts.join(' | ')||null;
+
+  try{await sb.from('sellers').insert([d]);}catch(err){console.log('DB:',err);}
+  try{
+    const fd=new FormData();
+    fd.append('domain','makethevillagehome.com');fd.append('type','seller');
+    fd.append('date',new Date().toISOString());
+    fd.append('first_name',d.first_name);fd.append('last_name',d.last_name);
+    fd.append('email',d.email);fd.append('phone',d.phone);
+    fd.append('address',d.address);fd.append('neighborhood',neighborhood||'');
+    fd.append('asking_price',askingPrice||'');fd.append('timeline',d.timeline||'');
+    fd.append('bedrooms',beds||'');fd.append('bathrooms',baths||'');
+    fd.append('wants_30day',wants30Day?'true':'false');
+    fd.append('notes',userNotes||'');
+    fetch(SHEET_URL,{method:'POST',body:fd,mode:'no-cors'});
+  }catch(err){}
+
+  document.getElementById('sellerForm').style.display='none';
+  document.getElementById('sellSuccessMsg').style.display='block';
+}
+
+// Handle browser back
+window.addEventListener('popstate',()=>{
+  const h=window.location.hash.replace('#','');
+  if(h==='buy'||h==='sell'){document.querySelectorAll('.page-view').forEach(v=>v.classList.remove('active'));document.getElementById(h+'View').classList.add('active');}
+  else{document.querySelectorAll('.page-view').forEach(v=>v.classList.remove('active'));document.getElementById('landingView').classList.add('active');}
+});
+
+init();
+
+// Page view tracking
+try{sb.from('page_views').insert([{domain:location.hostname,page:location.pathname+location.hash,referrer:document.referrer||null}]);}catch(e){}
+</script>
+</body>
+</html>
