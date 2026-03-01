@@ -1,17 +1,17 @@
 const HSV_STATS = {
-  "totalParcels": 4304,
-  "totalSubdivisions": 145,
-  "totalAssessedValue": 1539512615.0,
-  "avgAssessedValue": 357693,
-  "generated": "2026-03-01 01:12 UTC",
+  "totalParcels": 6633,
+  "totalSubdivisions": 248,
+  "totalAssessedValue": 2207960815.0,
+  "avgAssessedValue": 332875,
+  "generated": "2026-03-01 02:46 UTC",
   "topSubdivisions": [
+    {
+      "name": "ISABELLA",
+      "count": 303
+    },
     {
       "name": "VEREDA",
       "count": 243
-    },
-    {
-      "name": "ISABELLA",
-      "count": 215
     },
     {
       "name": "LADERA",
@@ -26,20 +26,32 @@ const HSV_STATS = {
       "count": 172
     },
     {
+      "name": "PROMESA",
+      "count": 159
+    },
+    {
+      "name": "GERONA",
+      "count": 153
+    },
+    {
       "name": "MARIA",
       "count": 144
+    },
+    {
+      "name": "MAGELLAN",
+      "count": 136
     },
     {
       "name": "ALTA VISTA",
       "count": 113
     },
     {
-      "name": "PROMESA",
-      "count": 89
+      "name": "TERUEL",
+      "count": 97
     },
     {
       "name": "REATA",
-      "count": 81
+      "count": 83
     },
     {
       "name": "SERGIO",
@@ -54,6 +66,14 @@ const HSV_STATS = {
       "count": 80
     },
     {
+      "name": "ALICANTE",
+      "count": 78
+    },
+    {
+      "name": "MAJORCA COURTS",
+      "count": 71
+    },
+    {
       "name": "ENCANTADO",
       "count": 70
     },
@@ -63,6 +83,10 @@ const HSV_STATS = {
     },
     {
       "name": "CARIBE",
+      "count": 69
+    },
+    {
+      "name": "TIBURON",
       "count": 69
     },
     {
@@ -82,48 +106,24 @@ const HSV_STATS = {
       "count": 61
     },
     {
+      "name": "HARTURA",
+      "count": 60
+    },
+    {
       "name": "SACEDON",
       "count": 59
     },
     {
-      "name": "SANCHEZ",
-      "count": 54
+      "name": "CORTEZ COURTS",
+      "count": 58
     },
     {
-      "name": "SAN PABLO",
-      "count": 53
+      "name": "GANCHO",
+      "count": 56
     },
     {
-      "name": "FAISAN",
-      "count": 52
-    },
-    {
-      "name": "CORONADO",
-      "count": 52
-    },
-    {
-      "name": "MARINERO",
-      "count": 49
-    },
-    {
-      "name": "SORPRESA",
-      "count": 49
-    },
-    {
-      "name": "ALEGRIA",
-      "count": 48
-    },
-    {
-      "name": "BELLISIMO",
-      "count": 47
-    },
-    {
-      "name": "BALLESTEROS",
-      "count": 46
-    },
-    {
-      "name": "PONCE DE LEON",
-      "count": 45
+      "name": "COSTA",
+      "count": 55
     }
   ]
 };
