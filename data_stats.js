@@ -1,9 +1,9 @@
 const HSV_STATS = {
-  "totalParcels": 6633,
-  "totalSubdivisions": 248,
-  "totalAssessedValue": 2207960815.0,
-  "avgAssessedValue": 332875,
-  "generated": "2026-03-01 02:46 UTC",
+  "totalParcels": 9592,
+  "totalSubdivisions": 348,
+  "totalAssessedValue": 2771937665.0,
+  "avgAssessedValue": 288984,
+  "generated": "2026-03-01 03:04 UTC",
   "topSubdivisions": [
     {
       "name": "ISABELLA",
@@ -12,6 +12,10 @@ const HSV_STATS = {
     {
       "name": "VEREDA",
       "count": 243
+    },
+    {
+      "name": "SANTA MARIA",
+      "count": 228
     },
     {
       "name": "LADERA",
@@ -42,12 +46,32 @@ const HSV_STATS = {
       "count": 136
     },
     {
+      "name": "CARTAGENA",
+      "count": 123
+    },
+    {
       "name": "ALTA VISTA",
       "count": 113
     },
     {
+      "name": "PUERTOLLANO",
+      "count": 107
+    },
+    {
+      "name": "SANTA CRUZ",
+      "count": 103
+    },
+    {
+      "name": "VALLE",
+      "count": 100
+    },
+    {
       "name": "TERUEL",
       "count": 97
+    },
+    {
+      "name": "GUADALAJARA",
+      "count": 95
     },
     {
       "name": "REATA",
@@ -68,6 +92,14 @@ const HSV_STATS = {
     {
       "name": "ALICANTE",
       "count": 78
+    },
+    {
+      "name": "SANTIAGO",
+      "count": 78
+    },
+    {
+      "name": "CASTILLO",
+      "count": 75
     },
     {
       "name": "MAJORCA COURTS",
@@ -92,38 +124,6 @@ const HSV_STATS = {
     {
       "name": "ZAFIRO",
       "count": 68
-    },
-    {
-      "name": "RONQUILLO",
-      "count": 66
-    },
-    {
-      "name": "GALEON",
-      "count": 65
-    },
-    {
-      "name": "MURILLO",
-      "count": 61
-    },
-    {
-      "name": "HARTURA",
-      "count": 60
-    },
-    {
-      "name": "SACEDON",
-      "count": 59
-    },
-    {
-      "name": "CORTEZ COURTS",
-      "count": 58
-    },
-    {
-      "name": "GANCHO",
-      "count": 56
-    },
-    {
-      "name": "COSTA",
-      "count": 55
     }
   ]
 };
